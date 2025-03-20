@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8-container2-deployment
+spec:
+  replicas: 1  # Runs one replica of your container
+  selector:
+    matchLabels:
+      app: k8-Container2
+  template:
+    metadata:
+      labels:
+        app: k8-Container2
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: gke-my-gke-cluster-my-node-pool-4a9afc28-nt71  # Ensure pod runs on the correct node
+      containers:
+      - name: container2
+        image: us-central1-docker.pkg.dev/k8-assignment-453622/kubernetes-containers/container2@sha256:eb9d14f4316a317dc4b59293a2e1bce5682c7aaddd501a207208785bc7deef29
+        ports:
+        - containerPort: 5001
+        volumeMounts:
+        - name: standard-volume
+          mountPath: /Bindu_PV_dir 
+      volumes:
+      - name: standard-volume
+        persistentVolumeClaim:
+          claimName: bindu-pvc
