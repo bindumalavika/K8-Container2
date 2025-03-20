@@ -1,3 +1,6 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+  
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
@@ -7,17 +10,6 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:$COMMIT_SHA']
 
-# Deploy to GKE
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'set'
-  - 'image'
-  - 'deployment/container2'
-  - 'container2=us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:$COMMIT_SHA'
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'
-
 # Tag as latest
 - name: 'gcr.io/cloud-builders/docker'
   args: ['tag', 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:$COMMIT_SHA', 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:latest']
@@ -26,9 +18,17 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:latest']
 
+# Deploy to GKE
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment/k8-container2-deployment'
+  - 'container2=us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:$COMMIT_SHA'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster'
+
 images:
 - 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:$COMMIT_SHA'
 - 'us-central1-docker.pkg.dev/$PROJECT_ID/kubernetes-containers/container2:latest'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
