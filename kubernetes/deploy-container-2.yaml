@@ -13,7 +13,7 @@ spec:
         app: k8-Container2
     spec:
       nodeSelector:
-        kubernetes.io/hostname: gke-my-gke-cluster-my-node-pool-4a9afc28-nt71  # Ensure pod runs on the correct node
+        kubernetes.io/hostname: gke-my-gke-cluster-my-node-pool-668dd6af-w44l  # Ensure pod runs on the correct node
       containers:
       - name: container2
         image: us-central1-docker.pkg.dev/k8-assignment-453622/kubernetes-containers/container2@sha256:eb9d14f4316a317dc4b59293a2e1bce5682c7aaddd501a207208785bc7deef29
