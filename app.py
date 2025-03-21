@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 PV_DIR = "/Bindu_PV_dir"
 
-@app.route('/calculate', methods=['POST'])
+@app.route('/process', methods=['POST'])
 def calculate():
     data = request.json
     
