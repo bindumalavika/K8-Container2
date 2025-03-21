@@ -5,7 +5,7 @@ from io import StringIO
 
 app = Flask(__name__)
 
-PV_DIR = "/Bindu_PV_dir "
+PV_DIR = "/Bindu_PV_dir"
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
