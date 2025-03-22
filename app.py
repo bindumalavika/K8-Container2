@@ -7,6 +7,27 @@ app = Flask(__name__)
 
 PV_DIR = "/Bindu_PV_dir"
 
+def is_valid_csv(file_path):
+    """Validate CSV structure: must have 'product' and 'amount' columns."""
+    try:
+        with open(file_path, 'r') as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            header = [col.strip().lower() for col in header]
+            
+            # Check required columns
+            if 'product' not in header or 'amount' not in header:
+                return False
+            
+            # Check data rows
+            for row in reader:
+                if len(row) != len(header):
+                    return False
+                
+        return True
+    except Exception:
+        return False
+
 @app.route('/process', methods=['POST'])
 def calculate():
     data = request.json
@@ -15,7 +36,7 @@ def calculate():
     if not data or 'file' not in data or not data['file']:
         return jsonify({"file": None, "error": "Invalid JSON input."}), 400
     
-    if 'product' not in data:
+    if 'product' not in data or not data['product']:
         return jsonify({"file": data['file'], "error": "Invalid JSON input."}), 400
     
     file_path = os.path.join(PV_DIR, data['file'])
@@ -24,33 +45,18 @@ def calculate():
     if not os.path.exists(file_path):
         return jsonify({"file": data['file'], "error": "File not found."}), 404
     
+    # Validate CSV format
+    if not is_valid_csv(file_path):
+        return jsonify({"file": data['file'], "error": "Input file not in CSV format."}), 400
+    
+    # Calculate sum
     try:
-        # Read file
-        with open(file_path, 'r') as f:
-            content = f.read()
-        
-        # Parse CSV
-        reader = csv.reader(StringIO(content))
-        header = next(reader)
-        
-        # Find product and amount columns
-        product_col = -1
-        amount_col = -1
-        for i, col in enumerate(header):
-            if col.strip().lower() == "product":
-                product_col = i
-            elif col.strip().lower() == "amount":
-                amount_col = i
-        
-        if product_col == -1 or amount_col == -1:
-            return jsonify({"file": data['file'], "error": "Input file not in CSV format."}), 400
-        
-        # Calculate sum
         total = 0
-        for row in reader:
-            if len(row) > max(product_col, amount_col):
-                if row[product_col].strip() == data['product']:
-                    total += int(row[amount_col].strip())
+        with open(file_path, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row['product'].strip() == data['product']:
+                    total += int(row['amount'].strip())
         
         return jsonify({"file": data['file'], "sum": total}), 200
     
