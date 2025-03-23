@@ -16,8 +16,6 @@ def is_valid_csv(file_path):
             if "product" not in headers or "amount" not in headers or not headers:
                 raise ValueError("Input file not in CSV format.")
 
-            f.seek(0)  # Reset file pointer
-            next(reader)  # Skip header
             data=[]
             for row in reader:
                 try:
