@@ -55,7 +55,7 @@ def calculate():
             return jsonify({"file": file_name, "error": "File not found.", "sum": 0}), 404
 
         try:
-            csv_data = read_and_validate_csv(file_path)
+            csv_data = is_valid_csv(file_path)
         except ValueError as e:
             print(f"CSV Read Error: {e}")
             return jsonify({"file": file_name, "error": str(e), "sum": 0}), 400
