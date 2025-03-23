@@ -17,7 +17,7 @@ def is_valid_csv(file_path):
                 raise ValueError("Input file not in CSV format.")
 
             # Reset file pointer to read rows correctly
-            csvfile.seek(0)
+            f.seek(0)
             next(reader)  # Skip the header row
 
             data = []
@@ -61,7 +61,7 @@ def calculate():
             return jsonify({"file": file_name, "error": str(e), "sum": 0}), 400
         
         print(f"Extracted CSV Data: {csv_data}")
-        
+
         total = sum(row["amount"] for row in csv_data if row["product"] == product)
         return jsonify({"file": file_name, "sum": int(total)}), 200
 
