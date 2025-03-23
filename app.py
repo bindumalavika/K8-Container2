@@ -5,7 +5,7 @@ import csv
 app = Flask(__name__)
 
 PV_DIR = "/Bindu_PV_dir"
-
+print(f"Testing CI/CD")
 def is_valid_csv(file_path):
     """Validate CSV structure: must have 'product' and 'amount' columns."""
     try:
